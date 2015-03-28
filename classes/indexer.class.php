@@ -4,12 +4,12 @@ class indexer {
 
     private $root_dir;
     private $parsers = [];
-    private $data_processor;
+    private $weather_model;
 
-    function __construct($root_dir, $data_processor) {
+    function __construct($root_dir, $weather_model) {
 
         $this->root_dir = $root_dir;
-        $this->data_processor = $data_processor;
+        $this->weather_model = $weather_model;
 
     }
 
@@ -39,9 +39,12 @@ class indexer {
 
                         $parser = $this->parsers[$ext];
                         $parser->set_file($file_path);
-                        $row = $parser->get_row();
+                        while (false !== ($row = $parser->get_row())) {
                         
-                        $this->data_processor->insert($row);
+                            $this->weather_model->set_new_data($row);
+                            $this->weather_model->insert();
+
+                        }
 
                     }
 
